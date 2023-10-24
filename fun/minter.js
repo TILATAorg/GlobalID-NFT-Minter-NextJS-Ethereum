@@ -26,6 +26,8 @@ async function mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL,
   // Wait for the transaction to be confirmed.
   await client.waitForTransactionConfirmation(txId);
 
+  window.location('/');
+
   // Return the NFT asset.
   return asset;
 }

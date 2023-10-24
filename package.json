@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethersproject/abstract-signer": "^5.7.0",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
     "@fontsource/rajdhani": "^5.0.8",
     "@fontsource/roboto": "^5.0.8",
     "@types/node": "20.7.0",

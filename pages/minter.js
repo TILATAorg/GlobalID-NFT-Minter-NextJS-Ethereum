@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { mintNFT } from '../fun/minter';
 
-const OpenSea = require('opensea-js');
-
 export default function Minter() {
   const [formData, setFormData] = useState({
-    NAME: '',
-    LAST_NAME: '',
-    DATE_OF_BIRTH: '',
-    COUNTRY: '',
-    PASSPORT_NUMBER: '',
-    EMAIL: '',
-    SITE: '',
+    NAME: 'FABO',
+    LAST_NAME: 'HAX',
+    DATE_OF_BIRTH: '1991-11-19',
+    COUNTRY: 'X',
+    PASSPORT: '987654321',
+    EMAIL: 'FABOHAX@GMAIL.COM',
+    SITE: 'FABOHAX.XYZ',
   });
 
   const [walletConnected, setWalletConnected] = useState(false);
   const [account, setAccount] = useState(null);
+  const [connectedWalletAddress, setConnectedWalletAddress] = useState(null);
+
   useEffect(() => {
     async function checkWalletConnection() {
       if (window.ethereum) {
@@ -35,7 +35,18 @@ export default function Minter() {
     }
 
     checkWalletConnection();
-  }, []);
+
+    const getConnectedWalletAddress = async () => {
+      if (walletConnected) {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        setConnectedWalletAddress(accounts[0]);
+      } else {
+        setConnectedWalletAddress(null);
+      }
+    };
+
+    getConnectedWalletAddress();
+  }, [walletConnected]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,35 +55,45 @@ export default function Minter() {
 
   async function handleMint() {
     const { NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL, SITE } = formData;
-  
+
     // Check if a wallet is connected
     if (!walletConnected) {
       console.error('Wallet not connected. Please connect your wallet.');
       return;
     }
-  
+
     // Check if the wallet is connected to the Sepolia testnet.
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    if (chainId !== 11155111) {
+    if (chainId !== 0xaa36a7) {
       console.error('Wallet not connected to the Sepolia testnet. Please connect to the Sepolia testnet.');
       return;
     }
-  
+
     // Perform the minting process using the connected account and form data
     try {
       const asset = await mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL, SITE);
-  
+
       // Display the NFT asset to the user.
       console.log('Minted NFT:', asset);
     } catch (error) {
       console.error('Error minting NFT:', error);
     }
   }
-  
+
   async function handleConnectWallet() {
     // Connect to the Sepolia testnet.
-    await window.ethereum.request({ chainId: 11155111 });
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0xaa36a7' }],
+    });
+  
+    // Add an event listener to be notified when the list of connected accounts changes.
+    window.ethereum.on('accountsChanged', () => {
+      // Update or refresh the page.
+    });
   }
+  
+  
 
   return (
     <div className='p-4 mx-auto my-auto grid place-content-center pt-12'>
@@ -84,14 +105,14 @@ export default function Minter() {
 
       {walletConnected && (
         <div id="minter-div">
-          <h1>Mint your Global ID</h1>
+          <h1><strong>Sign Global ID</strong></h1>
           <br></br>
-          <input
-            type="file"
-            name="PICTURE"
-            onChange={handleInputChange}
-            className='block mb-2 p-4 border-solid border-white border-2'
-          />
+          {connectedWalletAddress && (
+            <div id="connected-wallet-address">
+              {connectedWalletAddress}
+            </div>
+          )}
+          <br></br>
           {Object.entries(formData)
           .filter(([field]) => field !== 'PICTURE')
           .map(([field, value]) => (
@@ -109,7 +130,7 @@ export default function Minter() {
             Mint
           </button>
         </div>
-      )}      
+      )}
     </div>
   );
 }
