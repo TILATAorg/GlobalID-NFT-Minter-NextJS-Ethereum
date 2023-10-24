@@ -63,16 +63,20 @@ export default function Minter() {
     }
 
     // Check if the wallet is connected to the Sepolia testnet.
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    if (chainId !== 0xaa36a7) {
-      console.error('Wallet not connected to the Sepolia testnet. Please connect to the Sepolia testnet.');
-      return;
+    async function isConnectedToSepolia() {
+      // Get the current chain ID.
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    
+      // Compare the chain ID to the Sepolia testnet chain ID.
+      return chainId === '0xaa36a7';
     }
+    
+    
 
     // Perform the minting process using the connected account and form data
     try {
+      isConnectedToSepolia();
       const asset = await mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL, SITE);
-
       // Display the NFT asset to the user.
       console.log('Minted NFT:', asset);
     } catch (error) {
@@ -105,13 +109,7 @@ export default function Minter() {
 
       {walletConnected && (
         <div id="minter-div">
-          <h1><strong>Sign Global ID</strong></h1>
-          <br></br>
-          {connectedWalletAddress && (
-            <div id="connected-wallet-address">
-              {connectedWalletAddress}
-            </div>
-          )}
+          <h1 className='rounded-sm border-gray'><strong>Sign Global ID</strong></h1>
           <br></br>
           {Object.entries(formData)
           .filter(([field]) => field !== 'PICTURE')
@@ -123,10 +121,19 @@ export default function Minter() {
               placeholder={field}
               value={value}
               onChange={handleInputChange}
-              className='block mb-2 p-4 w-full text-black'
+              className='block mb-2 p-4 w-full text-black rounded-lg'
             />
           ))}
-          <button onClick={handleMint} className='bg-white p-4 text-black mb-4'>
+          <button className='bg-white p-4 text-black mb-4 rounded-lg w-full'>Birth Location</button>
+          <button className='bg-white p-4 text-black mb-4 rounded-lg w-full'>Residence Location</button>
+          <br></br>
+          {connectedWalletAddress && (
+            <button id="connected-wallet-address" className='bg-black p-4 text-gray mb-4 rounded-lg'>
+              {connectedWalletAddress}
+            </button>
+          )}
+          <br></br>
+          <button onClick={handleMint} className='bg-white p-4 text-black mb-4 rounded-lg w-full'>
             Mint
           </button>
         </div>

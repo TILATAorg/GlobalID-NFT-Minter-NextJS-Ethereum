@@ -31,3 +31,5 @@ async function mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL,
   // Return the NFT asset.
   return asset;
 }
+
+export default mintNFT;
