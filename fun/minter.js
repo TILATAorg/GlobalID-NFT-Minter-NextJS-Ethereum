@@ -1,6 +1,6 @@
 const OpenSea = require('opensea-js');
 
-async function mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL, SITE) {
+async function mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, ORIGIN) {
   // Create a new OpenSea client.
   const client = new OpenSea();
 
@@ -12,10 +12,7 @@ async function mintNFT(NAME, LAST_NAME, DATE_OF_BIRTH, COUNTRY, PASSPORT, EMAIL,
     NAME,
     LAST_NAME,
     DATE_OF_BIRTH,
-    COUNTRY,
-    PASSPORT,
-    EMAIL,
-    SITE
+    ORIGIN
   };
 
   // Mint the NFT.
